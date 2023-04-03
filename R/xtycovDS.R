@@ -47,33 +47,26 @@
 
 
 xtycovDS = function(x, y, covar, type, betaCov){
-
-if (type=="regress") {
-
-betaCov <-  as.numeric(unlist(strsplit(betaCov, split=",")))
+  
+  betaCov <-  as.numeric(unlist(strsplit(betaCov, split=",")))
   covar <- as.numeric(unlist(strsplit(covar, split=",")))
   x <- eval(parse(text=x), envir = parent.frame())
   y <- eval(parse(text=y), envir = parent.frame())
   
-  return(abs(base::t(x)%*%y - t(x)%*%x[, covar]%*%betaCov))
-  
-}else if (type=="classify") {
 
-betaCov <-  as.numeric(unlist(strsplit(betaCov, split=",")))
-  covar <- as.numeric(unlist(strsplit(covar, split=",")))
-  x <- eval(parse(text=x), envir = parent.frame())
-  y <- eval(parse(text=y), envir = parent.frame())
+  if (type=="regress") {
+    
+    return(abs(base::t(x)%*%y - t(x)%*%x[, covar, drop=FALSE]%*%betaCov))
   
-  return(abs(t(x) %*% (y/(exp(x[, covar]%*%betaCov * y) + 1))))
+  }else if (type=="classify") {
+    
+    return(abs(t(x) %*% (y/(exp(x[, covar, drop=FALSE]%*%betaCov * y) + 1))))
   
-}else{ 
-
-print("Error: Please, specify a valid type argument (regression(=regress) or classification(=classify)).") 
-  break;
-  
+  }else{ 
+    
+    print("Error: Please, specify a valid type argument (regression(=regress) or classification(=classify)).") 
+    break;
+    
   }
-
- 
-  
 }
 
